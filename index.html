@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Together – Less planning. More together.</title>
+<meta name="description" content="Find a family activity that fits your time, mood and materials, then play it step by step.">
+<style>
+:root{--bg:#1c1a18;--card:#282520;--bd:#3a352d;--or:#ff7947;--te:#239e91;--tx:#f5f1e9;--mu:#b9b0a3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+.w{max-width:680px;margin:0 auto;padding:20px 16px calc(100px + env(safe-area-inset-bottom))}
+h1{font-size:1.9rem;margin:.2em 0}h2{margin:.2em 0}h3{margin:.6em 0 .2em}
+.brand{color:var(--or);font-weight:800;letter-spacing:.02em}.mu{color:var(--mu);font-size:.92rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0004}
+.lbl{font-weight:700;margin:16px 0 8px}.row{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:999px;padding:10px 16px;min-height:44px;cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--te);outline-offset:2px}
+button[aria-pressed=true]{background:var(--te);border-color:var(--te);color:#fff;font-weight:600}
+.pri{background:var(--or);border-color:var(--or);color:#1c1a18;font-weight:800}.sec{border-color:var(--te);color:var(--te)}
+.big{width:100%;margin-top:10px}.lnk{background:none;border:0;color:var(--te);padding:6px 0;min-height:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tags span{font-size:.78rem;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:2px 8px}
+.why{border-left:3px solid var(--te);padding-left:10px;font-size:.92rem}
+.safe{background:#3a2a14;border-radius:12px;padding:8px 12px;font-size:.88rem;margin-top:10px}
+.bar{height:10px;background:var(--bd);border-radius:9px;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;background:var(--or)}
+.step{font-size:1.55rem;font-weight:700;line-height:1.35;margin:18px 0}
+.ico{font-size:2.4rem}.tip{background:#12302d;border:1px solid var(--te);border-radius:14px;padding:10px 14px;margin-top:12px}
+.tm{font-size:2rem;font-variant-numeric:tabular-nums;font-weight:700}
+textarea{width:100%;background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:14px;padding:10px;font:inherit}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bd);display:flex;justify-content:center;gap:4px;padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+nav button{border:0;background:none;flex:1;max-width:150px;border-radius:14px;font-size:.78rem;padding:4px;display:flex;flex-direction:column;align-items:center;color:var(--mu)}
+nav button b{font-size:1.25rem;font-weight:400}nav button.on{color:var(--or);font-weight:700}
+.rt button{font-size:1.5rem}
+.ov{position:fixed;inset:0;background:#000a;display:flex;align-items:flex-end;justify-content:center;z-index:10;animation:f .2s}
+@keyframes f{from{opacity:0}to{opacity:1}}
+.dlg{background:var(--card);border:1px solid var(--bd);border-radius:24px 24px 0 0;width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
+@media(min-width:700px){.ov{align-items:center}.dlg{border-radius:24px}}
+.dots{display:flex;gap:6px;margin-bottom:10px}.dots i{flex:1;height:6px;border-radius:9px;background:var(--bd)}.dots i.on{background:var(--or)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}.opts button{border-radius:16px;padding:14px 10px;text-align:center}
+.x{float:right;min-height:0;padding:2px 10px;border:0;background:none;font-size:1.4rem;color:var(--mu)}
+@media(prefers-reduced-motion:reduce){.ov{animation:none}}
+</style></head><body><div class="w"><main id="app" aria-live="polite"></main></div><nav id="nav" aria-label="Main"></nav>
+<script>
+const AGES=["0–2","3–5","6–8","9–12","13+"],TIMES=[10,20,30,60],MOODS=[["calm","Calm"],["creative","Creative"],["active","Active"],["any","Any mood"]];
+const MATS={paper:"Paper and pens",cardboard:"Cardboard boxes",blankets:"Blankets and cushions",kitchen:"Kitchen basics",outdoor:"Outdoor space or nature",music:"Music"};
+const WHO=[["pc","Parent and child"],["mc","Multiple children"],["wf","Whole family"]],PLACE=[["in","Indoors"],["out","Outdoors"],["any","Either"]];
+const X=(i,t,d,m,ag,mo,ma,pr,ms,pl,st,h,s,tm)=>({i,t,d,m,ag,mo,ma,pr,ms,pl,st,h,s,tm:tm||0});
+const ACTS=[
+X("🗺️","Indoor treasure hunt","Hunt for hidden picture clues around one room.",20,[1,2,3],"active",["paper"],"Low","None","in",["Draw or write 5 simple clues and hide them around one room.","Give clue 1 to your child and let them lead.","Read each clue together and cheer every find.","Reveal the final prize: a hug, a song or a sticker."],["Use pictures instead of words, like a sketch of the sofa.","Use 3 clues, hidden in plain sight.","Race a 2-minute timer.","Swap roles: your child hides the clues."],"Keep hiding spots low and floors clear. No climbing."),
+X("✏️","Silly creature drawing","Draw a mix-and-match creature, one part at a time.",15,[1,2,3,4],"creative",["paper"],"Low","None","any",["Fold a paper in three: head, body, legs.","Draw a head, fold it over and pass it on.","Add the body and legs the same way, then unfold.","Name the creature and give it a superpower."],["Start from a shape such as a circle or triangle.","Draw one creature together on one page.","Draw with your non-writing hand.","Draw the creature's family or home."],"Use washable markers and keep pens away from mouths."),
+X("🧱","Build the tallest tower","Stack plastic cups or boxes as high as you can.",20,[1,2,3,4],"creative",["kitchen"],"Low","None","in",["Gather 15–20 light stackable items such as plastic cups.","Start the 5-minute timer.","Take turns building the tallest freestanding tower.","Measure with a hand span and celebrate."],["Wide base first, then narrower layers.","Build together with no timer.","Build with only one hand each.","Build a bridge between two towers."],"Stack only light, unbreakable items. Keep towers away from babies and pets.",300),
+X("💬","Story chain","Build a story together, one sentence each.",10,[1,2,3,4],"creative",[],"None","None","any",["Start with one sentence, such as: One day a tiny dragon found a key.","Take turns adding one sentence each.","Add a silly twist every third turn.","End together and choose a title."],["Try: Once there was a sleepy robot who...","Add one word at a time instead of a sentence.","Add a surprise object every third turn.","Tell it backwards, starting from the ending."],"Keep stories kind. No special materials needed."),
+X("🔍","Color and shape detective","Spot colours and shapes around you.",10,[0,1,2],"calm",[],"None","None","any",["Pick a colour or a shape.","Say: I spy something... and let your child find it.","Swap roles: your child spies, you search.","Find 3 colours or shapes in every room."],["Give a clue, such as: it's near the window.","Use only one colour.","Race a 30-second timer per find.","Hunt for letters or numbers instead."],"Stay with objects that are safe and within reach."),
+X("✈️","Paper airplane challenge","Fold, test and improve flying paper planes.",15,[1,2,3,4],"creative",["paper"],"Low","None","any",["Each person folds a plane. Try different designs.","Mark a start line and test fly.","Measure the distance of three throws.","Tweak your design and fly again."],["Sharp folds make planes fly straighter.","Parent folds, child decorates and throws.","Add a target to hit.","Make the plane that stays up longest."],"Fly away from faces and use an open space. Soft paper only."),
+X("🐒","Animal movement game","Move like frogs, bears and snakes.",10,[0,1,2],"active",[],"None","None","any",["Clear a safe space on the floor.","Call out an animal, such as frog, snake or bear, and move like it.","Take turns choosing the animal.","End with a sleepy animal to calm down."],["Add sounds to every animal.","Pick slower animals, like a sleepy bear.","Race between two spots, animal-style.","Play charades: guess the animal."],"Clear the floor and sharp corners. Stay close to little ones."),
+X("🌿","Nature detective","Find small wonders on a short, supervised walk.",30,[0,1,2,3],"calm",["outdoor"],"Low","Low","out",["List 5 things to find: something round, soft, red, tiny, shiny.","Walk slowly and let your child look closely.","Tick off the list or collect leaves in a bag.","Sit and share your favourite find."],["Look down low and up high.","Find only 3 things.","Add a mystery item to find.","Do an alphabet hunt, A to Z."],"Stay in a safe area with an adult. Do not touch or taste unknown plants or berries. Wash hands after."),
+X("🦄","Invent an imaginary animal","Create an animal that does not exist.",20,[1,2,3],"creative",["paper"],"Low","None","any",["Decide where it lives.","Give it three unusual features.","Draw it together.","Name it, and say what it eats and sounds like."],["Mix two real animals.","Draw only one feature each.","Give it a secret superpower.","Make a pet shop for your animals."],"Use washable markers."),
+X("🎭","Family charades","Act out words without talking.",20,[1,2,3,4],"active",[],"None","None","in",["List easy ideas: animals, actions, favourite characters.","One person acts without speaking while the others guess.","Take turns so everyone acts at least once.","Make teams if you have older children."],["Allow one sound as a clue.","Use only animals.","Add a 30-second timer.","Act out a scene from a story."],"Clear the space first and keep movements gentle."),
+X("🧠","Memory challenge","Remember what was on the tray.",10,[1,2,3,4],"calm",["kitchen"],"Low","None","any",["Put 8 safe household objects on a tray, such as a spoon, cup and sock.","Show them for 20 seconds, then cover them.","Ask: what was on the tray?","Swap roles: remove one item and ask what is missing."],["Group objects by colour.","Use only 4 objects.","Remove two items at once.","Add silly items to the tray."],"Use only large, soft or unbreakable objects. No small items for children under 3.",20),
+X("❓","Family question game","Take turns asking fun questions.",10,[1,2,3,4],"calm",[],"None","None","any",["Take turns asking a question, such as: what was your best moment today?","Everyone answers and listens.","Let the youngest choose the next question.","End by saying one thing you are thankful for."],["Try: if you had a pet dragon, what name would it get?","Use either-or questions.","Roll a die to pick the question number.","Play Would you rather?"],"Keep it positive. Skip any question someone finds uncomfortable."),
+X("🏰","Blanket-fort adventure","Build a cosy fort and settle in with stories.",30,[0,1,2,3],"calm",["blankets"],"Low","Medium","in",["Pick a corner away from breakables.","Build the fort with blankets and cushions.","Add a torch or soft light, books and a toy.","Read, chat or tell stories inside."],["Use chairs as strong corners.","Make a small fort just for one cuddly toy.","Turn it into a pirate ship.","Have a quiet picnic in the fort."],"Keep blankets away from candles, heaters and hot lights. Make sure there is airflow. Stay with young children."),
+X("💡","Design a dream invention","Invent something that solves a problem.",20,[2,3,4],"creative",["paper"],"Low","None","any",["Ask: what problem would you like to solve?","Sketch the invention and label its parts.","Explain how it works.","Rate it from 1 to 5 and plan version 2."],["Start with an annoying everyday problem.","Draw it without any labels.","Add a secret feature.","Invent something for a pet."],"Everything stays on paper. No real tools."),
+X("👂","Sound detective","Listen closely and guess the sounds.",10,[0,1,2,3],"calm",[],"None","None","any",["Sit quietly and close your eyes.","Listen for 30 seconds and count sounds.","Share what you heard.","Make soft mystery sounds with household objects for the others to guess."],["Start with sounds from outside.","Point to where the sound came from.","Find a sound you cannot name.","Make a sound story."],"Keep volume gentle. Use only soft household objects.",30),
+X("🎵","Freeze dance","Dance until the music stops, then freeze.",10,[0,1,2,3],"active",["music"],"None","None","in",["Pick 3 favourite songs.","Dance until the music stops, then freeze.","Add a challenge, such as freezing like an animal.","Finish with a slow song to cool down."],["Dance with your child in your arms.","Use only one song.","Freeze in a funny pose.","Take turns being the DJ."],"Clear the floor and keep the volume child-safe.")];
+const DEF={p:{ages:[],time:20,mood:"any",mats:[],who:"pc",place:"any"},c:{quiet:false,seated:false},fav:[],hist:[],sess:null};
+let D=ld(),V="plan",R={l:[],pg:0,miss:{}},F={r:0,d:"",a:"",n:""},T={left:0,run:0,h:null};
+function ld(){try{const x=JSON.parse(localStorage.getItem("tg3"));return x?{...DEF,...x}:structuredClone(DEF)}catch(e){return structuredClone(DEF)}}
+function sv(){try{localStorage.setItem("tg3",JSON.stringify(D))}catch(e){}}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const chip=(l,on,fn)=>`<button aria-pressed="${on}" onclick="${fn}">${l}</button>`;
+function tg(k,v){const a=D.p[k],i=a.indexOf(v);i<0?a.push(v):a.splice(i,1);sv();go(V)}
+function st(k,v){D.p[k]=v;sv();go(V)}
+function rank(){
+ const p=D.p,rec=D.hist.slice(0,3).map(h=>h.i);
+ const ok=(a,i,rm)=>a.m<=p.time&&p.ages.every(g=>a.ag.includes(g))&&(p.place==="any"||a.pl==="any"||a.pl===p.place)&&!(D.c.seated&&a.mo==="active")&&!(D.c.quiet&&(a.mo==="active"))&&(rm||a.ma.every(m=>p.mats.includes(m)));
+ let L=ACTS.map((a,i)=>({a,i})).filter(x=>ok(x.a,x.i,false));
+ if(L.length<3)L=ACTS.map((a,i)=>({a,i})).filter(x=>ok(x.a,x.i,true));
+ L.forEach(x=>{const a=x.a,w=[];let s=0;
+  w.push(`fits your ${p.time}-minute window`);if(a.m>=p.time/2)s+=2;
+  if(p.mood!=="any"&&a.mo===p.mood){s+=3;w.push(`suits a ${a.mo} mood`)}
+  const need=a.ma.map(m=>MATS[m].toLowerCase());w.push(need.length?`needs only ${need.join(" and ")}`:"needs no materials");
+  if(p.who!=="pc"&&a.ag.length>=3){s+=2;w.push("works for mixed ages")}
+  if(D.fav.includes(x.i))s+=1;if(rec.includes(x.i))s-=3;
+  const r=D.hist.filter(h=>h.i===x.i);if(r.some(h=>h.r===3))s+=2;if(r.some(h=>h.r===1))s-=2;
+  x.s=s;x.why=w[0].charAt(0).toUpperCase()+w[0].slice(1)+(w.length>1?", "+w.slice(1).join(", "):"")+".";
+  x.miss=a.ma.filter(m=>!p.mats.includes(m))});
+ return L.sort((a,b)=>b.s-a.s)}
+function find(){R.all=rank();R.pg=0;go("res")}
+function more(){R.pg++;go("res")}
+function surprise(){const L=rank().slice(0,6);if(!L.length){R.all=[];go("res");return}start(L[Math.floor(Math.random()*L.length)].i)}
+function start(i){clearInterval(T.h);T={left:ACTS[i].tm,run:0,h:null};D.sess={i,s:0,pa:0,tip:""};sv();go("act")}
+function fav(i){const k=D.fav.indexOf(i);k<0?D.fav.push(i):D.fav.splice(k,1);sv();go(V)}
+function stp(d){const s=D.sess;s.s+=d;s.tip="";if(s.s>=ACTS[s.i].st.length){clearInterval(T.h);F={r:0,d:"",a:"",n:""};go("done");return}sv();go("act")}
+function tip(k){const s=D.sess,a=ACTS[s.i];s.tip=["Hint","Easier","More exciting","Variation"][k]+": "+a.h[k];sv();go("act")}
+function pause(){D.sess.pa=D.sess.pa?0:1;if(D.sess.pa){clearInterval(T.h);T.run=0}sv();go("act")}
+function quit(){if(confirm("Exit this activity? Your progress will be lost.")){clearInterval(T.h);D.sess=null;sv();go("plan")}}
+function tick(){if(T.run){clearInterval(T.h);T.run=0}else{if(!T.left)T.left=ACTS[D.sess.i].tm;T.run=1;T.h=setInterval(()=>{T.left--;if(T.left<=0){T.left=0;T.run=0;clearInterval(T.h)}document.getElementById("tm").textContent=fm(T.left);if(!T.run)go("act")},1000)}go("act")}
+function rst(){clearInterval(T.h);T.run=0;T.left=ACTS[D.sess.i].tm;go("act")}
+const fm=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+function fin(next){const i=D.sess.i;D.hist.unshift({i,d:new Date().toISOString().slice(0,10),r:F.r||2,done:F.d||"yes",again:F.a||"yes",n:document.getElementById("nt")?document.getElementById("nt").value.slice(0,300):""});D.hist=D.hist.slice(0,50);D.sess=null;sv();next?find():go("plan")}
+function fset(k,v){F[k]=v;const n=document.getElementById("nt");const t=n?n.value:"";go("done");if(t)document.getElementById("nt").value=t}
+function clr(){if(confirm("Clear all saved preferences, favorites and memories from this browser?")){D=structuredClone(DEF);sv();go("plan")}}
+function cs(k){D.c[k]=!D.c[k];sv();go(V)}
+function card(x,btn){const a=x.a||ACTS[x.i],i=x.i;return`<article class="card"><div class="ico" aria-hidden="true">${a.i}</div><h3>${a.t}</h3><p>${a.d}</p>
+<div class="tags"><span>⏱ ${a.m} min</span><span>👧 ${a.ag.map(g=>AGES[g]).join(", ")}</span><span>⚡ ${a.mo}</span><span>🧰 ${a.ma.length?a.ma.map(m=>MATS[m]).join(", "):"No materials"}</span><span>Prep: ${a.pr}</span><span>Mess: ${a.ms}</span></div>
+${x.why?`<p class="why">${x.why}</p>`:""}${x.miss&&x.miss.length?`<p class="mu">You would also need: ${x.miss.map(m=>MATS[m]).join(", ")}.</p>`:""}
+<div class="safe">🛡️ Adult supervision required. ${a.s}</div>${btn}</article>`}
+function planForm(){const p=D.p;return`<div class="lbl">Children's age range <span class="mu">(pick all that apply)</span></div><div class="row">${AGES.map((a,i)=>chip(a,p.ages.includes(i),`tg('ages',${i})`)).join("")}</div>
+<div class="lbl">Time available</div><div class="row">${TIMES.map(t=>chip(t+" min",p.time===t,`st('time',${t})`)).join("")}</div>
+<div class="lbl">Energy and mood</div><div class="row">${MOODS.map(([k,l])=>chip(l,p.mood===k,`st('mood','${k}')`)).join("")}</div>
+<div class="lbl">Available materials <span class="mu">(none selected = no materials)</span></div><div class="row">${Object.entries(MATS).map(([k,l])=>chip(l,p.mats.includes(k),`tg('mats','${k}')`)).join("")}</div>
+<div class="lbl">Who is participating?</div><div class="row">${WHO.map(([k,l])=>chip(l,p.who===k,`st('who','${k}')`)).join("")}</div>
+<div class="lbl">Location</div><div class="row">${PLACE.map(([k,l])=>chip(l,p.place===k,`st('place','${k}')`)).join("")}</div>`}
+const QS=[{k:"ages",q:"Who are we playing with today?",s:"Pick every age range that applies.",m:1,o:AGES.map((a,i)=>[i,"👧 "+a])},
+{k:"time",q:"How much time do you have?",o:TIMES.map(t=>[t,"⏱ "+t+" minutes"])},{k:"mood",q:"What's the mood?",o:MOODS},
+{k:"mats",q:"What's at hand?",s:"Pick any, or none at all.",m:1,o:Object.entries(MATS)},{k:"who",q:"Who's joining in?",o:WHO},{k:"place",q:"Inside or outside?",o:PLACE}];
+let W={o:0,s:0};
+function wopen(){W={o:1,s:0};render()}
+function wclose(){W.o=0;render()}
+function wback(){if(W.s>0){W.s--;render()}}
+function wnext(){if(W.s<QS.length-1){W.s++;render()}else{W.o=0;find()}}
+function wpick(j){const q=QS[W.s],v=q.o[j][0];if(q.m){const a=D.p[q.k],i=a.indexOf(v);i<0?a.push(v):a.splice(i,1);sv();render()}else{D.p[q.k]=v;sv();render();setTimeout(wnext,260)}}
+function wiz(){const q=QS[W.s],last=W.s===QS.length-1,need=q.k==="ages"&&!D.p.ages.length;
+ return`<div class="ov" onclick="if(event.target===this)wclose()"><div class="dlg" role="dialog" aria-modal="true" aria-label="Plan your activity"><button class="x" aria-label="Close" onclick="wclose()">×</button>
+<div class="dots" aria-hidden="true">${QS.map((_,i)=>`<i class="${i<=W.s?"on":""}"></i>`).join("")}</div><p class="mu">Question ${W.s+1} of ${QS.length}</p><h2>${q.q}</h2>${q.s?`<p class="mu">${q.s}</p>`:""}
+<div class="opts">${q.o.map((o,j)=>chip(o[1],q.m?D.p[q.k].includes(o[0]):D.p[q.k]===o[0],`wpick(${j})`)).join("")}</div>
+<div class="row" style="justify-content:space-between"><button ${W.s?"":"disabled"} onclick="wback()">Back</button><button class="pri" ${need?"disabled":""} onclick="wnext()">${last?"Find activities":"Next"}</button></div></div></div>`}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&W.o)wclose()});
+function go(v){V=v;W.o=0;render();}
+function render(){
+ const A=document.getElementById("app");let h="";
+ document.getElementById("nav").innerHTML=[["plan","🧭","Plan"],["act","▶️","Activity"],["mem","💛","Memories"],["pref","⚙️","Preferences"]].map(([k,i,l])=>`<button class="${(V===k||(k==="plan"&&V==="res")||(k==="act"&&V==="done"))?"on":""}" onclick="go('${k}')"><b>${i}</b>${l}</button>`).join("");
+ if(V==="plan"){const p=D.p,set=p.ages.length>0;h=`<p class="brand">Together</p><h1>What shall we do together today?</h1><p class="mu">Together finds activities suited to your family's time, mood and materials. Less planning. More together.</p><div class="card">`+
+ (set?`<b>Your answers</b><div class="tags"><span>👧 ${p.ages.map(g=>AGES[g]).join(", ")}</span><span>⏱ ${p.time} min</span><span>⚡ ${MOODS.find(m=>m[0]===p.mood)[1]}</span><span>🧰 ${p.mats.length?p.mats.map(m=>MATS[m]).join(", "):"No materials"}</span><span>${WHO.find(m=>m[0]===p.who)[1]}</span><span>${PLACE.find(m=>m[0]===p.place)[1]}</span></div><button class="pri big" onclick="find()">Find activities</button><button class="sec big" onclick="wopen()">Change my answers</button>`
+ :`<div class="ico" aria-hidden="true">🧭</div><p>Six quick questions and you're playing in under a minute.</p><button class="pri big" onclick="wopen()">Let's plan</button>`)+
+ `<button class="big" onclick="surprise()">Surprise us</button></div>`}
+ if(V==="res"){const L=R.all||[],n=L.length;h=`<button class="lnk" onclick="go('plan')">← Change preferences</button><h2>Ideas for your family</h2>`;
+  if(!n)h+=`<div class="card">No safe match for these choices. Try more time, fewer age ranges, or a different mood.</div>`;
+  else{h+=Array.from({length:Math.min(3,n)},(_,k)=>L[(R.pg*3+k)%n]).map(x=>card(x,`<div class="row" style="margin-top:12px"><button class="pri" onclick="start(${x.i})">Start activity</button><button aria-pressed="${D.fav.includes(x.i)}" onclick="fav(${x.i})">${D.fav.includes(x.i)?"♥ Saved":"♡ Save"}</button></div>`)).join("");
+   if(n>3)h+=`<button class="sec big" onclick="more()">Show another set</button>`;h+=`<button class="big" onclick="surprise()">Surprise us</button>`}}
+ if(V==="act"){const s=D.sess;if(!s)h=`<div class="card"><h2>No activity in progress</h2><p class="mu">Pick an activity on the Plan tab to start.</p><button class="pri big" onclick="go('plan')">Go to Plan</button></div>`;
+  else{const a=ACTS[s.i],n=a.st.length;h=`<div class="card"><div class="ico" aria-hidden="true">${a.i}</div><h2>${a.t}</h2><p class="mu">About ${a.m} minutes</p><div class="bar" role="progressbar" aria-valuemin="1" aria-valuemax="${n}" aria-valuenow="${s.s+1}"><i style="width:${(s.s+1)/n*100}%"></i></div><p class="mu">Step ${s.s+1} of ${n}</p>
+  ${s.pa?`<div class="step">⏸ Paused</div><button class="pri big" onclick="pause()">Resume</button>`:`<div class="step">${a.st[s.s]}</div>${s.tip?`<div class="tip">${esc(s.tip)}</div>`:""}
+  <div class="lbl">Need a hand?</div><div class="row">${["Give me a hint","Make it easier","Make it more exciting","Try a variation"].map((l,k)=>`<button class="sec" onclick="tip(${k})">${l}</button>`).join("")}</div>
+  ${a.tm?`<div class="lbl">Optional timer</div><span class="tm" id="tm">${fm(T.left||a.tm)}</span> <button onclick="tick()">${T.run?"Pause":"Start"}</button> <button onclick="rst()">Reset</button>`:""}
+  <div class="safe">🛡️ ${a.s}</div><div class="row" style="margin-top:14px"><button ${s.s?"":"disabled"} onclick="stp(-1)">Back</button><button class="pri" style="flex:1" onclick="stp(1)">${s.s===n-1?"Finish":"Next"}</button></div>
+  <div class="row" style="margin-top:10px"><button onclick="pause()">Pause</button><button onclick="quit()">Exit activity</button></div>`}</div>`}}
+ if(V==="done"){const a=ACTS[D.sess.i],b=(k,v,l)=>chip(l,F[k]===v,`fset('${k}','${v}')`);h=`<div class="card" style="text-align:center"><div class="ico">🎉</div><h2>You did it! Another moment together.</h2></div><div class="card"><div class="lbl">How much did your family enjoy ${a.t}?</div><div class="row rt">${[[3,"😍"],[2,"🙂"],[1,"😐"]].map(([v,l])=>chip(l,F.r===v,`fset('r',${v})`)).join("")}</div>
+ <div class="lbl">Did you complete it?</div><div class="row">${b("d","yes","Yes")}${b("d","partly","Partly")}</div><div class="lbl">Would you do it again?</div><div class="row">${b("a","yes","Yes")}${b("a","no","Not really")}</div>
+ <div class="lbl">Note (optional)</div><textarea id="nt" rows="2" maxlength="300" aria-label="Note"></textarea>
+ <div class="row" style="margin-top:12px"><button aria-pressed="${D.fav.includes(D.sess.i)}" onclick="fav(${D.sess.i})">${D.fav.includes(D.sess.i)?"♥ Saved to favorites":"♡ Save to favorites"}</button></div>
+ <button class="pri big" onclick="fin(1)">Save and try another activity</button><button class="big" onclick="fin(0)">Save and back to Plan</button></div>`}
+ if(V==="mem"){h=`<h1>Memories</h1><p class="mu">Saved only in this browser. Nothing leaves your device.</p><h3>Recently completed</h3>`+(D.hist.length?D.hist.map((e,k)=>{const a=ACTS[e.i];return`<div class="card"><b>${a.i} ${a.t}</b> <span class="mu">${e.d} · ${a.m} min · ${["","😐","🙂","😍"][e.r]}</span>${e.n?`<p>${esc(e.n)}</p>`:""}<button class="sec" onclick="start(${e.i})">Repeat</button></div>`}).join(""):`<div class="card mu">Nothing yet. Finish an activity and it will appear here.</div>`)+`<h3>Favorites</h3>`+(D.fav.length?D.fav.map(i=>card({i},`<div class="row" style="margin-top:12px"><button class="pri" onclick="start(${i})">Repeat</button><button onclick="fav(${i})">Remove</button></div>`)).join(""):`<div class="card mu">No favorites yet. Tap Save on any activity.</div>`)}
+ if(V==="pref")h=`<h1>Family Preferences</h1><p class="mu">These choices personalise the Plan screen. No names or birth dates are stored.</p><div class="card">${planForm()}<div class="lbl">Constraints</div><div class="row">${chip("Keep it quiet and calm",D.c.quiet,"cs('quiet')")}${chip("Low mobility (no active games)",D.c.seated,"cs('seated')")}</div></div><div class="card"><b>Your data</b><p class="mu">Preferences, favorites and memories are stored in this browser only. Recommendations use your past ratings and avoid recent repeats.</p><button class="big" onclick="clr()">Clear all saved data</button></div>`;
+ A.innerHTML=h+(W.o?wiz():"");if(W.o){const b=A.querySelector('.dlg .opts button');if(b&&!A.querySelector('.dlg [aria-pressed=true]'))b.focus()}}
+if(D.sess){V="act"}render();
+</script></body></html>
